@@ -1,0 +1,13 @@
+version: '3'
+services:
+
+  docker-external-props:
+    image: docker-external-props
+    container_name: docker-external-props
+    ports:
+      - 8080:8080
+    volumes:
+      - ~/logs:/var/app/logs
+    environment:
+     MY_MESSAGE: Hi
+     LOG_LEVEL: warn

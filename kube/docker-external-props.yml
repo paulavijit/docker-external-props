@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-external-props-deployment
+  labels:
+    app: docker-external-props
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: docker-external-props-pod
+      app: docker-external-props
+  template:
+    metadata:
+      name: docker-external-props-pod
+      labels:
+        name: docker-external-props-pod
+        app: docker-external-props
+    spec:
+      containers:
+        - name: docker-external-props
+          image: docker-external-props
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+           - mountPath: /var/app/logs
+             name: docker-external-props-volume
+          env:
+            - name: MY_MESSAGE
+              value: Hi
+            - name: LOG_LEVEL
+              value: warn
+      volumes:
+       - name: docker-external-props-volume
+         hostPath:
+          path: /Users/pavijit//logs
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: docker-external-props-service
+  labels:
+    name: docker-external-props-service
+    app: docker-external-props
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  selector:
+    name: docker-external-props-pod
+    app: docker-external-props
